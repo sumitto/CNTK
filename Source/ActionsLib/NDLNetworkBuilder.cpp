@@ -510,7 +510,7 @@ void NDLNodeEvaluatorImpl<ElemType>::Evaluate(NDLNode<ElemType>* node, const wst
     }
     else if (cnNodeType == OperationNameOf(BatchNormalizationNode))
     {
-        if (parameter.size() != 5)
+        if (parameter.size() < 5)
             RuntimeError("%ls should have 5 fixed parameters[inputValueNodeName, scale, bias, runMean, runVariance].", cnNodeType.c_str());
 
         // setup the parameter position of children so we can hook them up later
@@ -538,7 +538,7 @@ void NDLNodeEvaluatorImpl<ElemType>::Evaluate(NDLNode<ElemType>* node, const wst
                 InvalidArgument("Unsupported batch normalization engine, choose either \"cntk\"(default) or \"cudnn\".");
             ImageLayoutKind imageLayoutKind = ImageLayoutKindFrom(node->GetOptionalParameter("imageLayout", "CHW"));
 
-            nodePtr = builder.BatchNormalization(nullptr, nullptr, nullptr, nullptr, nullptr, spatial, normTimeConst, blendTimeConst, epsilon, useCntkEngine, imageLayoutKind, name);
+            nodePtr = builder.BatchNormalization(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, spatial, normTimeConst, blendTimeConst, epsilon, useCntkEngine, imageLayoutKind, name);
         }
     }
     else if (cnNodeType == OperationNameOf(CropNode))
@@ -629,6 +629,17 @@ void NDLNodeEvaluatorImpl<ElemType>::Evaluate(NDLNode<ElemType>* node, const wst
             vector<ComputationNodeBasePtr> inputNodes;
             for (let& in : inputs)
                 inputNodes.push_back(ComputationNode<ElemType>::FromVoidPtr(in));
+
+            // Patch up NDL network config by creating and injecting an additional input for
+            // BatchNormalizationNode
+            if (cnNodeType == OperationNameOf(BatchNormalizationNode)) 
+            {
+                ComputationNodePtr runSampleCount = builder.CreateLearnableParameter(name + L".run_sample_count", TensorShape(1));
+                runSampleCount->SetLearningRateMultiplier(0);
+                m_net->InitLearnableParameters(runSampleCount, L"fixedValue", 0);
+                inputNodes.push_back(runSampleCount);
+            }
+
             nodePtr->AttachInputs(inputNodes);
 #else       // TODO: delete this
             switch (inputs.size())

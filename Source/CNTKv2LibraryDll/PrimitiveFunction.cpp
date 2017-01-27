@@ -793,8 +793,16 @@ namespace CNTK
             return std::shared_ptr<BlockFunction>(new BlockFunction(std::move(composite), argumentsMap, blockOpName, std::move(attributes), name, uid),
                                                   [](BlockFunction* ptr) { delete ptr; });
         }
-        else
-            return std::shared_ptr<PrimitiveFunction>(new PrimitiveFunction(op, inputs, std::move(attributes), name, uid), 
-                                                      [](PrimitiveFunction* ptr) { delete ptr; });
+
+
+        if (version < 4 && op == PrimitiveOpType::BatchNormalization)
+        {
+            RuntimeError("Cannot deserialize BatchNormalization, the dictionary (version=%zu) does not contain a value "
+                    "for the 'running mean sample count' parameter.", version);
+
+        }
+        
+        return std::shared_ptr<PrimitiveFunction>(new PrimitiveFunction(op, inputs, std::move(attributes), name, uid), 
+                                                  [](PrimitiveFunction* ptr) { delete ptr; });
     }
 }

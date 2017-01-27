@@ -723,6 +723,19 @@ void TestThatExceptionsAreRaisedForNonExistentPaths()
 
 }
 
+void TestLoadingAModelWithALoadBatchNormFunction() {
+    VerifyException([]() {
+        Function::LoadModel(L"batch.norm.no.sample.count.v2.bin");
+    }, "Was able to load a stale model that does not define "
+       "'running sample mean count' as an input for BatchNormalization.");
+    
+    // make sure, we can load legacy V1 model.
+    auto model = Function::LoadModel(L"batch.norm.no.sample.count.v1.bin");
+    if (model == nullptr) {
+        ReportFailure("Failed to lead a legacy V1 model with a BatchNorm node.");
+    }
+}
+
 void TestLoadingDictionariesGeneratedFromPresentPastAndFutureProtos() 
 {
     Dictionary presentDict, pastDict, futureDict;
@@ -793,6 +806,8 @@ void TestCheckpointingWithStatefulNodes(const DeviceDescriptor& device)
 void SerializationTests()
 {
     fprintf(stderr, "\nSerializationTests..\n");
+
+    TestLoadingAModelWithALoadBatchNormFunction();
 
     TestThatExceptionsAreRaisedForNonExistentPaths();
     TestLoadingDictionariesGeneratedFromPresentPastAndFutureProtos();
