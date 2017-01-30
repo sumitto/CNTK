@@ -105,11 +105,11 @@ def dynamic_axes(self):
 {
     PyObject *NDShapeToTuple(const CNTK::NDShape& shape)
     {
-        size_t rank = shape.Rank();
+        int rank = static_cast<int>(shape.Rank());
         auto result = PyTuple_New(rank);
-        for (size_t i=0; i<rank; i++)
+        for (size_t i = 0; i < rank; i++)
         {
-            size_t dim = (&shape)->operator[](i);
+            int dim = static_cast<int>((&shape)->operator[](i));
             PyTuple_SetItem(result, rank-i-1, PyInt_FromLong(dim));
         }
         return result;
@@ -131,7 +131,7 @@ def dynamic_axes(self):
         size_t num_elements = 1;
 
         // CNTK uses column major, thus we reverse the shape
-        for (int i=dimensions_cntk.size()-1; i>=0; i--)
+        for (int i = static_cast<int>(dimensions_cntk.size()) - 1; i >= 0; i--)
         {
             dimensions.push_back(dimensions_cntk[i]);
             num_elements *= dimensions_cntk[i];
@@ -170,7 +170,7 @@ def dynamic_axes(self):
             throw std::invalid_argument("unknown CNTK data type");
         }
 
-        PyObject* ndarray = PyArray_SimpleNew(dimensions.size(), shape, numpy_type);
+        PyObject* ndarray = PyArray_SimpleNew(static_cast<int>(dimensions.size()), shape, numpy_type);
         void *arr_data = PyArray_DATA((PyArrayObject*)ndarray);
 
         memcpy(arr_data, buffer, PyArray_ITEMSIZE((PyArrayObject*) ndarray) * num_elements);
@@ -542,7 +542,7 @@ public:
         // CNTK uses column major, thus we reverse the shape
         for (size_t i=0; i<rank; i++)
         {
-            size_t dim = dims[i];
+            int dim = static_cast<int>(dims[i]);
             PyTuple_SET_ITEM(result, rank-1-i, PyInt_FromLong(dim));
         }
         return result;
@@ -1134,7 +1134,7 @@ std::unordered_map<CNTK::StreamInformation, std::pair<CNTK::NDArrayViewPtr, CNTK
 
         void* buffer = const_cast<void*>(reinterpret_cast<const void*>(cpuMask->DataBuffer()));
 
-        PyObject* ndarray = PyArray_SimpleNew(dimensions.size(), shape, NPY_BYTE);
+        PyObject* ndarray = PyArray_SimpleNew(static_cast<int>(dimensions.size()), shape, NPY_BYTE);
         void *arr_data = PyArray_DATA((PyArrayObject*)ndarray);
 
         memcpy(arr_data, buffer, PyArray_ITEMSIZE((PyArrayObject*) ndarray) * num_elements);
