@@ -37,6 +37,15 @@
 // Disabling warning about Trainer shadowing, trainer tests check this.
 %warnfilter(509) TrainerImpl;
 
+// Disabling enable_shared_from_this - we never use this class to actually access the object.
+%warnfilter(401) CNTK::NDArrayView;
+%warnfilter(401) CNTK::NDMask;
+%warnfilter(401) CNTK::Function;
+%warnfilter(401) CNTK::Trainer;
+%warnfilter(401) CNTK::Value;
+%warnfilter(401) CNTK::BackPropState;
+%warnfilter(401) CNTK::MinibatchSource;
+
 // The following operators are not supported in Python.
 %ignore operator<<;
 %ignore operator>>;
@@ -45,6 +54,9 @@
 
 %ignore CNTK::Dictionary::operator=;
 %ignore CNTK::Dictionary::operator[];
+
+%ignore CNTK::TrainingParameterSchedule::operator=;
+%ignore CNTK::TrainingParameterSchedule::operator[];
 
 // renaming overloads for TrainMinibatch and TestMinibatch that take a map 
 // of Variables and MinibatchData as their first parameter. If this is not done, 
@@ -1078,6 +1090,7 @@ std::unordered_map<CNTK::StreamInformation, std::pair<CNTK::NDArrayViewPtr, CNTK
 %unordered_map_ref_conversion(CNTK::Parameter, SWIGTYPE_p_CNTK__Parameter, CNTK::NDArrayViewPtr, SWIGTYPE_p_std__shared_ptrT_CNTK__NDArrayView);
 %unordered_map_ref_conversion(CNTK::Variable, SWIGTYPE_p_CNTK__Variable, CNTK::Variable, SWIGTYPE_p_CNTK__Variable);
 
+%shared_ptr(CNTK::IDictionarySerializable)
 %shared_ptr(CNTK::Trainer)
 %shared_ptr(CNTK::TrainingSession)
 %shared_ptr(CNTK::BasicTrainingSession)
@@ -1291,7 +1304,6 @@ std::unordered_map<CNTK::StreamInformation, std::pair<CNTK::NDArrayViewPtr, CNTK
 }
 
 // end of NDArrayView
-
 %template(NDArrayViewFloat) CNTK::NDArrayView::NDArrayView<float>;
 %template(NDArrayViewDouble) CNTK::NDArrayView::NDArrayView<double>;
 %template(ConstantFloat) CNTK::Constant::Constant<float>;
@@ -1301,7 +1313,6 @@ std::unordered_map<CNTK::StreamInformation, std::pair<CNTK::NDArrayViewPtr, CNTK
 %template(random_uniform_float) CNTK::NDArrayView::RandomUniform<float>;
 %template(random_uniform_double) CNTK::NDArrayView::RandomUniform<double>;
 %template(DictionaryValueFromDict) CNTK::DictionaryValue::DictionaryValue<CNTK::Dictionary>;
-
 
 %template(training_parameter_per_sample_schedule) CNTK::TrainingParameterPerUnitSchedule<double, CNTK::TrainingParameterSchedule<double>::UnitType::Sample>;
 %template(training_parameter_per_minibatch_schedule) CNTK::TrainingParameterPerUnitSchedule<double, CNTK::TrainingParameterSchedule<double>::UnitType::Minibatch>;
