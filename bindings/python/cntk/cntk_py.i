@@ -27,6 +27,9 @@
 // Disabling warning about constructor shadowing, learner tests check this.
 %warnfilter(509) CNTK::TrainingParameterPerUnitSchedule;
 
+// Disabling warning about Trainer shadowing, trainer tests check this.
+%warnfilter(509) TrainerImpl;
+
 // renaming overloads for TrainMinibatch and TestMinibatch that take a map 
 // of Variables and MinibatchData as their first parameter. If this is not done, 
 // the overloads that are legal in C++ will be shadowed and ignored by SWIG.
