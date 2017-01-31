@@ -24,6 +24,9 @@
 
 %rename(momentum_as_time_constant_schedule) CNTK::MomentumAsTimeConstantSchedule;
 
+// Disabling warning about constructor shadowing, learner tests check this.
+%warnfilter(509) CNTK::TrainingParameterPerUnitSchedule;
+
 // renaming overloads for TrainMinibatch and TestMinibatch that take a map 
 // of Variables and MinibatchData as their first parameter. If this is not done, 
 // the overloads that are legal in C++ will be shadowed and ignored by SWIG.
