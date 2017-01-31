@@ -40,7 +40,11 @@
 // The following operators are not supported in Python.
 %ignore operator<<;
 %ignore operator>>;
+%ignore CNTK::DictionaryValue::operator=;
 %ignore CNTK::DictionaryValue::Value;
+
+%ignore CNTK::Dictionary::operator=;
+%ignore CNTK::Dictionary::operator[];
 
 // renaming overloads for TrainMinibatch and TestMinibatch that take a map 
 // of Variables and MinibatchData as their first parameter. If this is not done, 
