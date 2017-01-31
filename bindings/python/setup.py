@@ -127,7 +127,7 @@ cntk_module = Extension(
     name="_cntk_py",
 
     sources = [os.path.join("cntk", "cntk_py.i")],
-    swig_opts = ["-c++", "-D_MSC_VER", "-I" + cntkV2LibraryInclude, "-I" + cntkBindingCommon, "-Werror"],
+    swig_opts = ["-c++", "-D_MSC_VER", "-I" + cntkV2LibraryInclude, "-I" + cntkBindingCommon ],
     libraries = link_libs,
     library_dirs = [CNTK_LIB_PATH],
 

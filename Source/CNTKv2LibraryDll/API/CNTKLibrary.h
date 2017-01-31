@@ -2430,12 +2430,7 @@ namespace CNTK
         ///
         /// Returns the name of the operation that this Function denotes
         ///
-        virtual const std::wstring& OpName() const 
-#ifdef SWIG 
-        { NOT_IMPLEMENTED; }
-#else
-        = 0;
-#endif
+        virtual const std::wstring& OpName() const = 0;
 
     protected:
         ///

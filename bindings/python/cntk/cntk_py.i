@@ -21,14 +21,26 @@
 %rename(times_transpose) CNTK::TransposeTimes;
 %rename(sequence_slice) CNTK::Sequence::Slice;
 %rename(sequence_reduce_sum) CNTK::Sequence::ReduceSum;
-
 %rename(momentum_as_time_constant_schedule) CNTK::MomentumAsTimeConstantSchedule;
+
+%rename(_none) CNTK::DictionaryValue::Type::None;
 
 // Disabling warning about constructor shadowing, learner tests check this.
 %warnfilter(509) CNTK::TrainingParameterPerUnitSchedule;
+%warnfilter(509) CNTK::MomentumAsTimeConstantSchedule;
+%warnfilter(509) CNTK::NDArrayView::NDArrayView;
+
+// Disabling warning about movable constructor shadowing, io tests check this.
+%warnfilter(509) CNTK::DictionaryValue::DictionaryValue;
+%warnfilter(509) CNTK::Dictionary::Dictionary;
 
 // Disabling warning about Trainer shadowing, trainer tests check this.
 %warnfilter(509) TrainerImpl;
+
+// The following operators are not supported in Python.
+%ignore operator<<;
+%ignore operator>>;
+%ignore CNTK::DictionaryValue::Value;
 
 // renaming overloads for TrainMinibatch and TestMinibatch that take a map 
 // of Variables and MinibatchData as their first parameter. If this is not done, 
